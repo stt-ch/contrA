@@ -50,11 +50,8 @@ strategies = {
 # Streamlit UI
 st.title("contrA - Schopenhauer's Argument Counter")
 
-# Opponent's argument input
-opponent_argument = st.text_area("Enter the opponent's argument:")
-
-# Your argument input
-your_argument = st.text_area("Enter your argument:")
+# Argument input
+argument = st.text_area("Enter the argument:")
 
 # Strategy selection
 selected_strategies = st.multiselect(
@@ -71,20 +68,20 @@ if selected_strategies:
 if st.button("Counter"):
     # Combine selected strategies into a prompt
     strategies_prompt = ", ".join(selected_strategies)
-    prompt = f"Counter the following argument using these strategies: {strategies_prompt}\n\nOpponent's Argument: {opponent_argument}\n\nYour Argument: {your_argument}"
+    prompt = f"Counter the following argument using these strategies: {strategies_prompt}\n\nArgument: {argument}"
     
     # Make a request to OpenAI
-    completion = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            },
-        ],
+    completion = openai.chat.completions.create(
+    model="gpt-4",
+    messages=[
+        {
+            "role": "user",
+            "content": prompt,
+        },
+     ],
     )
    
     # Display the counter-argument
-    counter_argument = completion.choices[0].message['content']
+    counter_argument = completion.choices[0].message.content
     st.subheader("Counter-Argument:")
     st.text_area("Generated Counter-Argument:", value=counter_argument, height=200)

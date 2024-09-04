@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import openai
 
+# Set your OpenAI API key as an environment variable
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 # Dictionary of Schopenhauer's strategies with their short descriptions
@@ -49,8 +50,11 @@ strategies = {
 # Streamlit UI
 st.title("contrA - Schopenhauer's Argument Counter")
 
-# Argument input
-argument = st.text_area("Enter the argument:")
+# Opponent's argument input
+opponent_argument = st.text_area("Enter the opponent's argument:")
+
+# Your argument input
+your_argument = st.text_area("Enter your argument:")
 
 # Strategy selection
 selected_strategies = st.multiselect(
@@ -67,20 +71,20 @@ if selected_strategies:
 if st.button("Counter"):
     # Combine selected strategies into a prompt
     strategies_prompt = ", ".join(selected_strategies)
-    prompt = f"Counter the following argument using these strategies: {strategies_prompt}\n\nArgument: {argument}"
+    prompt = f"Counter the following argument using these strategies: {strategies_prompt}\n\nOpponent's Argument: {opponent_argument}\n\nYour Argument: {your_argument}"
     
     # Make a request to OpenAI
-    completion = openai.chat.completions.create(
-    model="gpt-4",
-    messages=[
-        {
-            "role": "user",
-            "content": prompt,
-        },
-     ],
+    completion = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
     )
    
     # Display the counter-argument
-    counter_argument = completion.choices[0].message.content
+    counter_argument = completion.choices[0].message['content']
     st.subheader("Counter-Argument:")
     st.text_area("Generated Counter-Argument:", value=counter_argument, height=200)
